@@ -32,22 +32,19 @@ let quotesArray = [];
                 }
             });
 
-            const nextLink = $('li.next > a').attr('href');
-            if (nextLink) {
-                url = `https://quotes.toscrape.com${nextLink}`;
+            const next = $('li[class="next"] > a').attr('href');
+            if (next) {
+                url = `https://quotes.toscrape.com${next}`;
                 pagina++;
             } else {
                 url = null;
             }
         }
-
-        console.log(`\n Total de citas encontradas: ${quotesArray.length}`);
-
-       
+       // ::::::::::: JSON ::::::::::::
         fs.writeFileSync('./Archivos/quotes.json', JSON.stringify(quotesArray, null, 2));
         console.log(' Archivo JSON creado: quotes.json');
 
-       
+       // ::::::::::: CSV ::::::::::::
         const csvParser = new Parser({
             fields: ['texto', 'autor', 'tags'],
             transforms: [(row) => ({
@@ -65,6 +62,8 @@ let quotesArray = [];
             autor: q.autor,
             tags: q.tags.join(', ')
         }));
+
+        // ::::::::::: XLSX ::::::::::::
         const worksheet = XLSX.utils.json_to_sheet(quotesForExcel);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Citas');
